@@ -12,13 +12,14 @@ pour avoir les fonctions qui marchent correctement.
 
 import numpy as np
 import matplotlib.pyplot as plt
-from source import eGreedy, UCB, Thompson, computeLowerBound
+from source import ETC, eGreedy, UCB, Thompson, computeLowerBound
 from random import random
 
 colors = ['blue', 'green', 'red', 'cyan', 'magenta', 'black']
 graphic = True
 
 horizon = 2000
+
 time = np.arange(horizon)
 
 # True parameters of the problem
@@ -33,8 +34,10 @@ LB = computeLowerBound(horizon, true_means)
 logLB = LB * np.log(time + 1)
 
 # No strategy : linear regret
-coeff = 1  # TODO : completer !!
+coeff = true_means[0]-np.mean(true_means)
+# coeff = 1
 linUB = coeff * time
+
 
 #  Epsilon-Greedy Approach
 
@@ -43,6 +46,7 @@ epsilon = np.array([0.1, 0.5, 0.8])  # controls EpsilonGreedy policy
 # cumRegret stores the cumulated regret for each strategy
 cumRegret = np.zeros((np.size(epsilon), horizon))
 i = 0
+muEmpirique = 0
 for eps in epsilon:
     print ('Epsilon Greedy strategy with epsilon ' + str(eps))
 
@@ -53,13 +57,16 @@ for eps in epsilon:
         regret = np.zeros(horizon)
 
         for t in time:
-            arm_chosen = eGreedy(n_arms, eps, rewards, draws)
+            m = 100
+            arm_chosen = ETC(t,n_arms, m, rewards, draws)
+            # arm_chosen = eGreedy(n_arms, eps, rewards, draws)
             # arm_chosen = UCB(t, rewards, draws)
             # arm_chosen = Thompson(n_arms, rewards, draws)
 
             draws[arm_chosen] += 1
             reward = float(random() < true_means[arm_chosen])
             rewards[arm_chosen] += reward
+            
             regret[t] = np.max(true_means) - true_means[arm_chosen]  # exp. regret
         cumRegret[i, :] += np.cumsum(regret)
     i += 1
@@ -106,7 +113,7 @@ avgRegret = cumRegret / nMC
 
 if graphic:
     plt.figure()
-    # plt.plot(linUB, color=colors[0], label='no strategy')
+    plt.plot(linUB, color=colors[0], label='no strategy')
     plt.plot(logLB, color=colors[1], label='Lower Bound')
     plt.plot(avgRegret, color=colors[2], label='UCB with alpha =' + str(alpha))
     plt.xlabel('Time')
@@ -139,7 +146,7 @@ avgRegret = cumRegret / nMC
 
 if graphic:
     plt.figure()
-    # plt.plot(linUB, color=colors[0], label='no strategy')
+    plt.plot(linUB, color=colors[0], label='no strategy')
     plt.plot(logLB, color=colors[1], label='Lower Bound')
     plt.plot(avgRegret, color=colors[2], label='Thompson Sampling')
     plt.xlabel('Time')

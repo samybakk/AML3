@@ -16,10 +16,14 @@ def eGreedy(n_arms, epsilon, rewards, draws):
 #    TODO 
     return c
 
-def ETC(n_arms, m, rewards, draws):
-    c=0
-#    TODO 
-    return c
+def ETC(t,n_arms, m, rewards, draws):
+    
+    if t >= m * n_arms:
+        a = np.argmax(rewards)
+ 
+    else :
+        a = t%4
+    return a
 
 def UCB(t, alpha, rewards, draws):
     if np.sum(draws == 0) > 0:
@@ -48,7 +52,7 @@ def kl(a, b):
 def computeLowerBound(horizon, true_means):
     bound = []
     for mean in true_means[1:] :
-        bound.append(log(horizon,10)/kl(mean,true_means[0]))
+        bound.append(np.log(horizon)/kl(mean,true_means[0]))
         
     print(bound)
     return np.min(bound)
