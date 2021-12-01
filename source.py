@@ -8,7 +8,7 @@ import numpy as np
 from random import random, randint
 
 # from random import betavariate
-from math import log
+from math import log,sqrt
 
 
 
@@ -32,12 +32,22 @@ def eGreedy(n_arms, epsilon, rewards, draws):
     
 
 def UCB(t, alpha, rewards, draws):
+    upperBound = np.zeros(4)
     if np.sum(draws == 0) > 0:
             c = np.where(draws == 0)[0][0]
     else:
-        indices = rewards / draws  # TODO
+        indices = rewards / draws
         winners = np.argwhere(indices == np.max(indices))
-        c = np.random.choice(winners[0])
+        delta = 1/(t**alpha)
+        if len(winners) > 1:
+            temp = np.random.choice(winners[0])
+            UCB =  indices[temp] + sqrt(log(1/delta)/(2*draws[temp]))
+        else:
+            UCB = indices[winners] + sqrt(log(1/delta)/(2*draws[winners]))
+        upperBound[winners] = UCB
+
+        c = np.argmax(upperBound)
+
 
     return c
 
