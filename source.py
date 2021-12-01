@@ -45,8 +45,10 @@ def kl(a, b):
     return a * log(a / b) + (1 - a) * log((1 - a) / (1 - b))
 
 
-def computeLowerBound(n_arms, true_means):
-
-    # TODO : use kl
-
-    return np.mean(true_means)
+def computeLowerBound(horizon, true_means):
+    bound = []
+    for mean in true_means[1:] :
+        bound.append(log(horizon,10)/kl(mean,true_means[0]))
+        
+    print(bound)
+    return np.min(bound)

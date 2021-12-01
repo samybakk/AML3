@@ -29,7 +29,7 @@ n_arms = np.size(true_means)
 nMC = 20
 
 # Compute the Lower Bound (lai & Robbins) :
-LB = computeLowerBound(n_arms, true_means)
+LB = computeLowerBound(horizon, true_means)
 logLB = LB * np.log(time + 1)
 
 # No strategy : linear regret
