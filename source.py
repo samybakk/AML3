@@ -11,10 +11,7 @@ from random import random, randint
 from math import log
 
 
-def eGreedy(n_arms, epsilon, rewards, draws):
-    c=0
-#    TODO 
-    return c
+
 
 def ETC(t,n_arms, m, rewards, draws):
     
@@ -24,6 +21,15 @@ def ETC(t,n_arms, m, rewards, draws):
     else :
         a = t%4
     return a
+
+def eGreedy(n_arms, epsilon, rewards, draws):
+    if random() < 1-epsilon:
+        a = np.argmax(rewards)
+    
+    else:
+        a = randint(0,3)
+    return a
+    
 
 def UCB(t, alpha, rewards, draws):
     if np.sum(draws == 0) > 0:
@@ -49,10 +55,11 @@ def kl(a, b):
     return a * log(a / b) + (1 - a) * log((1 - a) / (1 - b))
 
 
-def computeLowerBound(horizon, true_means):
-    bound = []
+def computeLowerBound(n_arms, true_means):
+    bound =0
+    
     for mean in true_means[1:] :
-        bound.append(np.log(horizon)/kl(mean,true_means[0]))
+        dA = true_means[0] - mean
+        bound += np.log(n_arms)*dA/kl(mean,true_means[0])
         
-    print(bound)
-    return np.min(bound)
+    return bound

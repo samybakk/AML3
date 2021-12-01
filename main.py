@@ -30,7 +30,7 @@ n_arms = np.size(true_means)
 nMC = 20
 
 # Compute the Lower Bound (lai & Robbins) :
-LB = computeLowerBound(horizon, true_means)
+LB = computeLowerBound(n_arms, true_means)
 logLB = LB * np.log(time + 1)
 
 # No strategy : linear regret
@@ -41,7 +41,7 @@ linUB = coeff * time
 
 #  Epsilon-Greedy Approach
 
-epsilon = np.array([0.1, 0.5, 0.8])  # controls EpsilonGreedy policy
+epsilon = np.array([0.1, 0.5, 0.8,0.9999])  # controls EpsilonGreedy policy
 
 # cumRegret stores the cumulated regret for each strategy
 cumRegret = np.zeros((np.size(epsilon), horizon))
@@ -58,9 +58,9 @@ for eps in epsilon:
 
         for t in time:
             m = 100
-            arm_chosen = ETC(t,n_arms, m, rewards, draws)
-            # arm_chosen = eGreedy(n_arms, eps, rewards, draws)
-            # arm_chosen = UCB(t, rewards, draws)
+            # arm_chosen = ETC(t,n_arms, m, rewards, draws)
+            arm_chosen = eGreedy(n_arms, eps, rewards, draws)
+            # arm_chosen = UCB(t,1, rewards, draws)
             # arm_chosen = Thompson(n_arms, rewards, draws)
 
             draws[arm_chosen] += 1
